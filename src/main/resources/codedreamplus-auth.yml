@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    # 假如时区报错了，就加哪的时区
+    url: jdbc:mysql://127.0.0.1:3306/code_auth?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    port: 6379
+    password:
+    host: localhost
+  security:
+    oauth2:
+      selectClientDetailsSql: "select client_id, client_secret,resource_ids, scope, authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, refresh_token_validity, additional_information, autoapprove from oauth_client_details  where client_id = ?"
+      findClientDetailsSql: "select client_id, client_secret,resource_ids, scope, authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, refresh_token_validity, additional_information, autoapprove from oauth_client_details  order by client_id"
+    userdetails:
+      findUsersSql: "select * from tb_user where username = ?"
+      findRoleAndFunctionSql: " SELECT DISTINCT
+                rf.function_code as name
+            FROM
+                tb_user_role ur
+                LEFT JOIN tb_role_function rf ON ur.role_id = rf.role_id
+            WHERE
+                ur.user_id = ?
+                and ur.is_delete = 0
+                and rf.is_delete=0"
+    resource-server:
+      skip-url:
+        - "/callBack/**"
